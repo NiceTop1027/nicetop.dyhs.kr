@@ -1,0 +1,1907 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@theme inline {
+  --font-sans: var(--font-inter), var(--font-noto-sans-kr), system-ui, -apple-system, sans-serif;
+}
+
+/* 폰트 로딩 안정화 */
+body {
+  font-family: var(--font-inter), var(--font-noto-sans-kr), Arial, Helvetica, sans-serif !important;
+  font-display: swap !important;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* 호스팅 환경 안정화를 위한 강제 스타일 */
+  .force-dark-bg {
+    background-color: #000000 !important;
+  }
+
+  .force-dark-card {
+    background-color: rgba(17, 24, 39, 0.8) !important;
+  }
+
+  .force-white-text {
+    color: #ffffff !important;
+  }
+
+  .force-gray-text {
+    color: #d1d5db !important;
+  }
+
+  .force-gradient-blue-purple {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6) !important;
+  }
+
+  .force-gradient-green-blue {
+    background: linear-gradient(135deg, #10b981, #3b82f6) !important;
+  }
+
+  .force-gradient-purple-pink {
+    background: linear-gradient(135deg, #8b5cf6, #ec4899) !important;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* ===== 마크다운 파서 전용 강제 스타일링 (v0/호스팅 동기화) ===== */
+
+/* 모든 마크다운 컨테이너에 대한 기본 스타일 강제 적용 */
+.curriculum-content,
+.community-content,
+.markdown-content,
+.wargame-content {
+  color: #ffffff !important;
+  line-height: 1.8 !important;
+  font-size: 16px !important;
+  font-family: var(--font-inter), var(--font-noto-sans-kr), Arial, Helvetica, sans-serif !important;
+}
+
+.curriculum-content *,
+.community-content *,
+.markdown-content *,
+.wargame-content * {
+  color: #ffffff !important;
+}
+
+/* ===== 마크다운 파서에서 생성되는 모든 Tailwind 클래스 강제 적용 ===== */
+
+/* Flexbox 레이아웃 */
+.curriculum-content .inline-flex,
+.community-content .inline-flex,
+.markdown-content .inline-flex,
+.wargame-content .inline-flex {
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.curriculum-content .items-center,
+.community-content .items-center,
+.markdown-content .items-center,
+.wargame-content .items-center {
+  align-items: center !important;
+}
+
+.curriculum-content .gap-1\.5,
+.community-content .gap-1\.5,
+.markdown-content .gap-1\.5,
+.wargame-content .gap-1\.5 {
+  gap: 0.375rem !important;
+}
+
+.curriculum-content .gap-2,
+.community-content .gap-2,
+.markdown-content .gap-2,
+.wargame-content .gap-2 {
+  gap: 0.5rem !important;
+}
+
+/* 패딩과 마진 */
+.curriculum-content .px-3,
+.community-content .px-3,
+.markdown-content .px-3,
+.wargame-content .px-3 {
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
+}
+
+.curriculum-content .py-1\.5,
+.community-content .py-1\.5,
+.markdown-content .py-1\.5,
+.wargame-content .py-1\.5 {
+  padding-top: 0.375rem !important;
+  padding-bottom: 0.375rem !important;
+}
+
+.curriculum-content .px-4,
+.community-content .px-4,
+.markdown-content .px-4,
+.wargame-content .px-4 {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+.curriculum-content .py-2,
+.community-content .py-2,
+.markdown-content .py-2,
+.wargame-content .py-2 {
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+}
+
+.curriculum-content .mx-1,
+.community-content .mx-1,
+.markdown-content .mx-1,
+.wargame-content .mx-1 {
+  margin-left: 0.25rem !important;
+  margin-right: 0.25rem !important;
+}
+
+.curriculum-content .my-6,
+.community-content .my-6,
+.markdown-content .my-6,
+.wargame-content .my-6 {
+  margin-top: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.curriculum-content .mb-4,
+.community-content .mb-4,
+.markdown-content .mb-4,
+.wargame-content .mb-4 {
+  margin-bottom: 1rem !important;
+}
+
+.curriculum-content .mb-6,
+.community-content .mb-6,
+.markdown-content .mb-6,
+.wargame-content .mb-6 {
+  margin-bottom: 1.5rem !important;
+}
+
+.curriculum-content .mb-8,
+.community-content .mb-8,
+.markdown-content .mb-8,
+.wargame-content .mb-8 {
+  margin-bottom: 2rem !important;
+}
+
+.curriculum-content .mb-12,
+.community-content .mb-12,
+.markdown-content .mb-12,
+.wargame-content .mb-12 {
+  margin-bottom: 3rem !important;
+}
+
+.curriculum-content .mt-16,
+.community-content .mt-16,
+.markdown-content .mt-16,
+.wargame-content .mt-16 {
+  margin-top: 4rem !important;
+}
+
+.curriculum-content .mt-20,
+.community-content .mt-20,
+.markdown-content .mt-20,
+.wargame-content .mt-20 {
+  margin-top: 5rem !important;
+}
+
+.curriculum-content .pb-6,
+.community-content .pb-6,
+.markdown-content .pb-6,
+.wargame-content .pb-6 {
+  padding-bottom: 1.5rem !important;
+}
+
+.curriculum-content .pl-6,
+.community-content .pl-6,
+.markdown-content .pl-6,
+.wargame-content .pl-6 {
+  padding-left: 1.5rem !important;
+}
+
+/* 그라데이션 배경 */
+.curriculum-content .bg-gradient-to-r,
+.community-content .bg-gradient-to-r,
+.markdown-content .bg-gradient-to-r,
+.wargame-content .bg-gradient-to-r {
+  background-image: linear-gradient(to right, var(--tw-gradient-stops)) !important;
+}
+
+.curriculum-content .bg-gradient-to-br,
+.community-content .bg-gradient-to-br,
+.markdown-content .bg-gradient-to-br,
+.wargame-content .bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, var(--tw-gradient-stops)) !important;
+}
+
+/* 그라데이션 색상 정의 */
+.curriculum-content .from-blue-600,
+.community-content .from-blue-600,
+.markdown-content .from-blue-600,
+.wargame-content .from-blue-600 {
+  --tw-gradient-from: #2563eb !important;
+  --tw-gradient-to: rgb(37 99 235 / 0) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+.curriculum-content .to-purple-600,
+.community-content .to-purple-600,
+.markdown-content .to-purple-600,
+.wargame-content .to-purple-600 {
+  --tw-gradient-to: #9333ea !important;
+}
+
+.curriculum-content .via-purple-600,
+.community-content .via-purple-600,
+.markdown-content .via-purple-600,
+.wargame-content .via-purple-600 {
+  --tw-gradient-to: rgb(147 51 234 / 0) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), #9333ea, var(--tw-gradient-to) !important;
+}
+
+.curriculum-content .from-white,
+.community-content .from-white,
+.markdown-content .from-white,
+.wargame-content .from-white {
+  --tw-gradient-from: #ffffff !important;
+  --tw-gradient-to: rgb(255 255 255 / 0) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+.curriculum-content .to-gray-300,
+.community-content .to-gray-300,
+.markdown-content .to-gray-300,
+.wargame-content .to-gray-300 {
+  --tw-gradient-to: #d1d5db !important;
+}
+
+.curriculum-content .from-slate-900,
+.community-content .from-slate-900,
+.markdown-content .from-slate-900,
+.wargame-content .from-slate-900 {
+  --tw-gradient-from: #0f172a !important;
+  --tw-gradient-to: rgb(15 23 42 / 0) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+.curriculum-content .via-gray-900,
+.community-content .via-gray-900,
+.markdown-content .via-gray-900,
+.wargame-content .via-gray-900 {
+  --tw-gradient-to: rgb(17 24 39 / 0) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), #111827, var(--tw-gradient-to) !important;
+}
+
+.curriculum-content .to-slate-900,
+.community-content .to-slate-900,
+.markdown-content .to-slate-900,
+.wargame-content .to-slate-900 {
+  --tw-gradient-to: #0f172a !important;
+}
+
+/* 배경색 */
+.curriculum-content .bg-gray-900,
+.community-content .bg-gray-900,
+.markdown-content .bg-gray-900,
+.wargame-content .bg-gray-900 {
+  background-color: #111827 !important;
+}
+
+.curriculum-content .bg-slate-800,
+.community-content .bg-slate-800,
+.markdown-content .bg-slate-800,
+.wargame-content .bg-slate-800 {
+  background-color: #1e293b !important;
+}
+
+.curriculum-content .bg-gray-800,
+.community-content .bg-gray-800,
+.markdown-content .bg-gray-800,
+.wargame-content .bg-gray-800 {
+  background-color: #1f2937 !important;
+}
+
+.curriculum-content .bg-white,
+.community-content .bg-white,
+.markdown-content .bg-white,
+.wargame-content .bg-white {
+  background-color: #ffffff !important;
+}
+
+/* 투명도 배경 */
+.curriculum-content .bg-gray-900\/50,
+.community-content .bg-gray-900\/50,
+.markdown-content .bg-gray-900\/50,
+.wargame-content .bg-gray-900\/50 {
+  background-color: rgba(17, 24, 39, 0.5) !important;
+}
+
+.curriculum-content .bg-slate-900\/80,
+.community-content .bg-slate-900\/80,
+.markdown-content .bg-slate-900\/80,
+.wargame-content .bg-slate-900\/80 {
+  background-color: rgba(15, 23, 42, 0.8) !important;
+}
+
+/* 텍스트 색상 */
+.curriculum-content .text-transparent,
+.community-content .text-transparent,
+.markdown-content .text-transparent,
+.wargame-content .text-transparent {
+  color: transparent !important;
+}
+
+.curriculum-content .text-white,
+.community-content .text-white,
+.markdown-content .text-white,
+.wargame-content .text-white {
+  color: #ffffff !important;
+}
+
+.curriculum-content .text-gray-300,
+.community-content .text-gray-300,
+.markdown-content .text-gray-300,
+.wargame-content .text-gray-300 {
+  color: #d1d5db !important;
+}
+
+.curriculum-content .text-gray-400,
+.community-content .text-gray-400,
+.markdown-content .text-gray-400,
+.wargame-content .text-gray-400 {
+  color: #9ca3af !important;
+}
+
+.curriculum-content .text-blue-400,
+.community-content .text-blue-400,
+.markdown-content .text-blue-400,
+.wargame-content .text-blue-400 {
+  color: #60a5fa !important;
+}
+
+.curriculum-content .text-green-400,
+.community-content .text-green-400,
+.markdown-content .text-green-400,
+.wargame-content .text-green-400 {
+  color: #4ade80 !important;
+}
+
+.curriculum-content .text-red-400,
+.community-content .text-red-400,
+.markdown-content .text-red-400,
+.wargame-content .text-red-400 {
+  color: #f87171 !important;
+}
+
+.curriculum-content .text-yellow-400,
+.community-content .text-yellow-400,
+.markdown-content .text-yellow-400,
+.wargame-content .text-yellow-400 {
+  color: #facc15 !important;
+}
+
+.curriculum-content .text-purple-400,
+.community-content .text-purple-400,
+.markdown-content .text-purple-400,
+.wargame-content .text-purple-400 {
+  color: #c084fc !important;
+}
+
+.curriculum-content .text-pink-400,
+.community-content .text-pink-400,
+.markdown-content .text-pink-400,
+.wargame-content .text-pink-400 {
+  color: #f472b6 !important;
+}
+
+.curriculum-content .text-orange-400,
+.community-content .text-orange-400,
+.markdown-content .text-orange-400,
+.wargame-content .text-orange-400 {
+  color: #fb923c !important;
+}
+
+.curriculum-content .text-cyan-400,
+.community-content .text-cyan-400,
+.markdown-content .text-cyan-400,
+.wargame-content .text-cyan-400 {
+  color: #22d3ee !important;
+}
+
+/* 배경 클립과 텍스트 효과 */
+.curriculum-content .bg-clip-text,
+.community-content .bg-clip-text,
+.markdown-content .bg-clip-text,
+.wargame-content .bg-clip-text {
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+}
+
+/* 폰트 굵기 */
+.curriculum-content .font-mono,
+.community-content .font-mono,
+.markdown-content .font-mono,
+.wargame-content .font-mono {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace !important;
+}
+
+.curriculum-content .font-semibold,
+.community-content .font-semibold,
+.markdown-content .font-semibold,
+.wargame-content .font-semibold {
+  font-weight: 600 !important;
+}
+
+.curriculum-content .font-bold,
+.community-content .font-bold,
+.markdown-content .font-bold,
+.wargame-content .font-bold {
+  font-weight: 700 !important;
+}
+
+.curriculum-content .font-extrabold,
+.community-content .font-extrabold,
+.markdown-content .font-extrabold,
+.wargame-content .font-extrabold {
+  font-weight: 800 !important;
+}
+
+.curriculum-content .font-black,
+.community-content .font-black,
+.markdown-content .font-black,
+.wargame-content .font-black {
+  font-weight: 900 !important;
+}
+
+/* 텍스트 크기 */
+.curriculum-content .text-sm,
+.community-content .text-sm,
+.markdown-content .text-sm,
+.wargame-content .text-sm {
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+}
+
+.curriculum-content .text-base,
+.community-content .text-base,
+.markdown-content .text-base,
+.wargame-content .text-base {
+  font-size: 1rem !important;
+  line-height: 1.5rem !important;
+}
+
+.curriculum-content .text-lg,
+.community-content .text-lg,
+.markdown-content .text-lg,
+.wargame-content .text-lg {
+  font-size: 1.125rem !important;
+  line-height: 1.75rem !important;
+}
+
+.curriculum-content .text-xl,
+.community-content .text-xl,
+.markdown-content .text-xl,
+.wargame-content .text-xl {
+  font-size: 1.25rem !important;
+  line-height: 1.75rem !important;
+}
+
+.curriculum-content .text-2xl,
+.community-content .text-2xl,
+.markdown-content .text-2xl,
+.wargame-content .text-2xl {
+  font-size: 1.5rem !important;
+  line-height: 2rem !important;
+}
+
+.curriculum-content .text-4xl,
+.community-content .text-4xl,
+.markdown-content .text-4xl,
+.wargame-content .text-4xl {
+  font-size: 2.25rem !important;
+  line-height: 2.5rem !important;
+}
+
+.curriculum-content .text-5xl,
+.community-content .text-5xl,
+.markdown-content .text-5xl,
+.wargame-content .text-5xl {
+  font-size: 3rem !important;
+  line-height: 1 !important;
+}
+
+/* 텍스트 스타일 */
+.curriculum-content .leading-relaxed,
+.community-content .leading-relaxed,
+.markdown-content .leading-relaxed,
+.wargame-content .leading-relaxed {
+  line-height: 1.625 !important;
+}
+
+.curriculum-content .tracking-wide,
+.community-content .tracking-wide,
+.markdown-content .tracking-wide,
+.wargame-content .tracking-wide {
+  letter-spacing: 0.025em !important;
+}
+
+.curriculum-content .tracking-wider,
+.community-content .tracking-wider,
+.markdown-content .tracking-wider,
+.wargame-content .tracking-wider {
+  letter-spacing: 0.05em !important;
+}
+
+.curriculum-content .uppercase,
+.community-content .uppercase,
+.markdown-content .uppercase,
+.wargame-content .uppercase {
+  text-transform: uppercase !important;
+}
+
+.curriculum-content .italic,
+.community-content .italic,
+.markdown-content .italic,
+.wargame-content .italic {
+  font-style: italic !important;
+}
+
+.curriculum-content .underline,
+.community-content .underline,
+.markdown-content .underline,
+.wargame-content .underline {
+  text-decoration-line: underline !important;
+}
+
+.curriculum-content .decoration-2,
+.community-content .decoration-2,
+.markdown-content .decoration-2,
+.wargame-content .decoration-2 {
+  text-decoration-thickness: 2px !important;
+}
+
+.curriculum-content .decoration-blue-500,
+.community-content .decoration-blue-500,
+.markdown-content .decoration-blue-500,
+.wargame-content .decoration-blue-500 {
+  text-decoration-color: #3b82f6 !important;
+}
+
+.curriculum-content .underline-offset-4,
+.community-content .underline-offset-4,
+.markdown-content .underline-offset-4,
+.wargame-content .underline-offset-4 {
+  text-underline-offset: 4px !important;
+}
+
+/* 테두리 */
+.curriculum-content .border-l-4,
+.community-content .border-l-4,
+.markdown-content .border-l-4,
+.wargame-content .border-l-4 {
+  border-left-width: 4px !important;
+}
+
+.curriculum-content .border-b-2,
+.community-content .border-b-2,
+.markdown-content .border-b-2,
+.wargame-content .border-b-2 {
+  border-bottom-width: 2px !important;
+}
+
+.curriculum-content .border-b-4,
+.community-content .border-b-4,
+.markdown-content .border-b-4,
+.wargame-content .border-b-4 {
+  border-bottom-width: 4px !important;
+}
+
+.curriculum-content .border-slate-200,
+.community-content .border-slate-200,
+.markdown-content .border-slate-200,
+.wargame-content .border-slate-200 {
+  border-color: #e2e8f0 !important;
+}
+
+.curriculum-content .border-slate-700,
+.community-content .border-slate-700,
+.markdown-content .border-slate-700,
+.wargame-content .border-slate-700 {
+  border-color: #334155 !important;
+}
+
+.curriculum-content .border-blue-500,
+.community-content .border-blue-500,
+.markdown-content .border-blue-500,
+.wargame-content .border-blue-500 {
+  border-color: #3b82f6 !important;
+}
+
+.curriculum-content .border-gray-600,
+.community-content .border-gray-600,
+.markdown-content .border-gray-600,
+.wargame-content .border-gray-600 {
+  border-color: #4b5563 !important;
+}
+
+/* 둥근 모서리 */
+.curriculum-content .rounded-lg,
+.community-content .rounded-lg,
+.markdown-content .rounded-lg,
+.wargame-content .rounded-lg {
+  border-radius: 0.5rem !important;
+}
+
+.curriculum-content .rounded-xl,
+.community-content .rounded-xl,
+.markdown-content .rounded-xl,
+.wargame-content .rounded-xl {
+  border-radius: 0.75rem !important;
+}
+
+.curriculum-content .rounded-full,
+.community-content .rounded-full,
+.markdown-content .rounded-full,
+.wargame-content .rounded-full {
+  border-radius: 9999px !important;
+}
+
+/* 위치 */
+.curriculum-content .relative,
+.community-content .relative,
+.markdown-content .relative,
+.wargame-content .relative {
+  position: relative !important;
+}
+
+.curriculum-content .absolute,
+.community-content .absolute,
+.markdown-content .absolute,
+.wargame-content .absolute {
+  position: absolute !important;
+}
+
+.curriculum-content .inset-0,
+.community-content .inset-0,
+.markdown-content .inset-0,
+.wargame-content .inset-0 {
+  top: 0px !important;
+  right: 0px !important;
+  bottom: 0px !important;
+  left: 0px !important;
+}
+
+.curriculum-content .top-0,
+.community-content .top-0,
+.markdown-content .top-0,
+.wargame-content .top-0 {
+  top: 0px !important;
+}
+
+.curriculum-content .left-0,
+.community-content .left-0,
+.markdown-content .left-0,
+.wargame-content .left-0 {
+  left: 0px !important;
+}
+
+.curriculum-content .right-0,
+.community-content .right-0,
+.markdown-content .right-0,
+.wargame-content .right-0 {
+  right: 0px !important;
+}
+
+.curriculum-content .bottom-0,
+.community-content .bottom-0,
+.markdown-content .bottom-0,
+.wargame-content .bottom-0 {
+  bottom: 0px !important;
+}
+
+/* Z-index */
+.curriculum-content .z-10,
+.community-content .z-10,
+.markdown-content .z-10,
+.wargame-content .z-10 {
+  z-index: 10 !important;
+}
+
+/* 오버플로우 */
+.curriculum-content .overflow-hidden,
+.community-content .overflow-hidden,
+.markdown-content .overflow-hidden,
+.wargame-content .overflow-hidden {
+  overflow: hidden !important;
+}
+
+.curriculum-content .overflow-x-auto,
+.community-content .overflow-x-auto,
+.markdown-content .overflow-x-auto,
+.wargame-content .overflow-x-auto {
+  overflow-x: auto !important;
+}
+
+/* 크기 */
+.curriculum-content .w-0,
+.community-content .w-0,
+.markdown-content .w-0,
+.wargame-content .w-0 {
+  width: 0px !important;
+}
+
+.curriculum-content .w-1,
+.community-content .w-1,
+.markdown-content .w-1,
+.wargame-content .w-1 {
+  width: 0.25rem !important;
+}
+
+.curriculum-content .w-1\.5,
+.community-content .w-1\.5,
+.markdown-content .w-1\.5,
+.wargame-content .w-1\.5 {
+  width: 0.375rem !important;
+}
+
+.curriculum-content .w-2,
+.community-content .w-2,
+.markdown-content .w-2,
+.wargame-content .w-2 {
+  width: 0.5rem !important;
+}
+
+.curriculum-content .w-full,
+.community-content .w-full,
+.markdown-content .w-full,
+.wargame-content .w-full {
+  width: 100% !important;
+}
+
+.curriculum-content .h-0\.5,
+.community-content .h-0\.5,
+.markdown-content .h-0\.5,
+.wargame-content .h-0\.5 {
+  height: 0.125rem !important;
+}
+
+.curriculum-content .h-1,
+.community-content .h-1,
+.markdown-content .h-1,
+.wargame-content .h-1 {
+  height: 0.25rem !important;
+}
+
+.curriculum-content .h-1\.5,
+.community-content .h-1\.5,
+.markdown-content .h-1\.5,
+.wargame-content .h-1\.5 {
+  height: 0.375rem !important;
+}
+
+.curriculum-content .h-2,
+.community-content .h-2,
+.markdown-content .h-2,
+.wargame-content .h-2 {
+  height: 0.5rem !important;
+}
+
+.curriculum-content .max-w-full,
+.community-content .max-w-full,
+.markdown-content .max-w-full,
+.wargame-content .max-w-full {
+  max-width: 100% !important;
+}
+
+.curriculum-content .min-w-\[3rem\],
+.community-content .min-w-\[3rem\],
+.markdown-content .min-w-\[3rem\],
+.wargame-content .min-w-\[3rem\] {
+  min-width: 3rem !important;
+}
+
+/* 텍스트 정렬 */
+.curriculum-content .text-center,
+.community-content .text-center,
+.markdown-content .text-center,
+.wargame-content .text-center {
+  text-align: center !important;
+}
+
+.curriculum-content .text-left,
+.community-content .text-left,
+.markdown-content .text-left,
+.wargame-content .text-left {
+  text-align: left !important;
+}
+
+/* 디스플레이 */
+.curriculum-content .inline-block,
+.community-content .inline-block,
+.markdown-content .inline-block,
+.wargame-content .inline-block {
+  display: inline-block !important;
+}
+
+.curriculum-content .block,
+.community-content .block,
+.markdown-content .block,
+.wargame-content .block {
+  display: block !important;
+}
+
+.curriculum-content .flex,
+.community-content .flex,
+.markdown-content .flex,
+.wargame-content .flex {
+  display: flex !important;
+}
+
+/* 간격 */
+.curriculum-content .space-y-1 > :not([hidden]) ~ :not([hidden]),
+.community-content .space-y-1 > :not([hidden]) ~ :not([hidden]),
+.markdown-content .space-y-1 > :not([hidden]) ~ :not([hidden]),
+.wargame-content .space-y-1 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 0.25rem !important;
+}
+
+.curriculum-content .space-y-2 > :not([hidden]) ~ :not([hidden]),
+.community-content .space-y-2 > :not([hidden]) ~ :not([hidden]),
+.markdown-content .space-y-2 > :not([hidden]) ~ :not([hidden]),
+.wargame-content .space-y-2 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 0.5rem !important;
+}
+
+/* 기타 유틸리티 */
+.curriculum-content .break-all,
+.community-content .break-all,
+.markdown-content .break-all,
+.wargame-content .break-all {
+  word-break: break-all !important;
+}
+
+.curriculum-content .border-collapse,
+.community-content .border-collapse,
+.markdown-content .border-collapse,
+.wargame-content .border-collapse {
+  border-collapse: collapse !important;
+}
+
+/* 그림자 */
+.curriculum-content .shadow-lg,
+.community-content .shadow-lg,
+.markdown-content .shadow-lg,
+.wargame-content .shadow-lg {
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1) !important;
+}
+
+/* 애니메이션과 전환 */
+.curriculum-content .transition-all,
+.community-content .transition-all,
+.markdown-content .transition-all,
+.wargame-content .transition-all {
+  transition-property: all !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition-duration: 150ms !important;
+}
+
+.curriculum-content .duration-200,
+.community-content .duration-200,
+.markdown-content .duration-200,
+.wargame-content .duration-200 {
+  transition-duration: 200ms !important;
+}
+
+.curriculum-content .duration-300,
+.community-content .duration-300,
+.markdown-content .duration-300,
+.wargame-content .duration-300 {
+  transition-duration: 300ms !important;
+}
+
+.curriculum-content .duration-1000,
+.community-content .duration-1000,
+.markdown-content .duration-1000,
+.wargame-content .duration-1000 {
+  transition-duration: 1000ms !important;
+}
+
+/* 투명도 */
+.curriculum-content .opacity-0,
+.community-content .opacity-0,
+.markdown-content .opacity-0,
+.wargame-content .opacity-0 {
+  opacity: 0 !important;
+}
+
+.curriculum-content .opacity-50,
+.community-content .opacity-50,
+.markdown-content .opacity-50,
+.wargame-content .opacity-50 {
+  opacity: 0.5 !important;
+}
+
+.curriculum-content .opacity-100,
+.community-content .opacity-100,
+.markdown-content .opacity-100,
+.wargame-content .opacity-100 {
+  opacity: 1 !important;
+}
+
+/* 그룹 호버 효과 */
+.curriculum-content .group:hover .group-hover\:opacity-100,
+.community-content .group:hover .group-hover\:opacity-100,
+.markdown-content .group:hover .group-hover\:opacity-100,
+.wargame-content .group:hover .group-hover\:opacity-100 {
+  opacity: 1 !important;
+}
+
+.curriculum-content .group:hover .group-hover\:w-full,
+.community-content .group:hover .group-hover\:w-full,
+.markdown-content .group:hover .group-hover\:w-full,
+.wargame-content .group:hover .group-hover\:w-full {
+  width: 100% !important;
+}
+
+/* ===== 기존 마크다운 스타일 유지 ===== */
+
+.curriculum-content h1,
+.curriculum-content h2,
+.curriculum-content h3,
+.curriculum-content h4,
+.curriculum-content h5,
+.curriculum-content h6,
+.community-content h1,
+.community-content h2,
+.community-content h3,
+.community-content h4,
+.community-content h5,
+.community-content h6,
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6,
+.wargame-content h1,
+.wargame-content h2,
+.wargame-content h3,
+.wargame-content h4,
+.wargame-content h5,
+.wargame-content h6 {
+  color: #ffffff !important;
+  font-weight: bold !important;
+  margin-bottom: 1rem !important;
+  margin-top: 1.5rem !important;
+}
+
+.curriculum-content h1,
+.community-content h1,
+.markdown-content h1,
+.wargame-content h1 {
+  font-size: 2rem !important;
+}
+
+.curriculum-content h2,
+.community-content h2,
+.markdown-content h2,
+.wargame-content h2 {
+  font-size: 1.75rem !important;
+}
+
+.curriculum-content h3,
+.community-content h3,
+.markdown-content h3,
+.wargame-content h3 {
+  font-size: 1.5rem !important;
+}
+
+.curriculum-content h4,
+.community-content h4,
+.markdown-content h4,
+.wargame-content h4 {
+  font-size: 1.25rem !important;
+}
+
+.curriculum-content h5,
+.community-content h5,
+.markdown-content h5,
+.wargame-content h5 {
+  font-size: 1.125rem !important;
+}
+
+.curriculum-content h6,
+.community-content h6,
+.markdown-content h6,
+.wargame-content h6 {
+  font-size: 1rem !important;
+}
+
+.curriculum-content p,
+.community-content p,
+.markdown-content p,
+.wargame-content p {
+  color: #ffffff !important;
+  margin-bottom: 1rem !important;
+  line-height: 1.8 !important;
+  font-size: 16px !important;
+}
+
+.curriculum-content code,
+.community-content code,
+.markdown-content code,
+.wargame-content code {
+  background-color: #374151 !important;
+  color: #ffffff !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  font-family: "Courier New", monospace !important;
+  font-size: 14px !important;
+}
+
+.curriculum-content pre,
+.community-content pre,
+.markdown-content pre,
+.wargame-content pre {
+  background-color: #1f2937 !important;
+  color: #ffffff !important;
+  padding: 1rem !important;
+  border-radius: 8px !important;
+  overflow-x: auto !important;
+  margin: 1rem 0 !important;
+  border: 1px solid #4b5563 !important;
+}
+
+.curriculum-content pre code,
+.community-content pre code,
+.markdown-content pre code,
+.wargame-content pre code {
+  background-color: transparent !important;
+  padding: 0 !important;
+  font-size: 14px !important;
+}
+
+.curriculum-content blockquote,
+.community-content blockquote,
+.markdown-content blockquote,
+.wargame-content blockquote {
+  border-left: 4px solid #6b7280 !important;
+  padding-left: 1rem !important;
+  color: #d1d5db !important;
+  font-style: italic !important;
+  margin: 1rem 0 !important;
+  background-color: rgba(75, 85, 99, 0.1) !important;
+  padding: 1rem !important;
+  border-radius: 4px !important;
+}
+
+.curriculum-content ul,
+.curriculum-content ol,
+.community-content ul,
+.community-content ol,
+.markdown-content ul,
+.markdown-content ol,
+.wargame-content ul,
+.wargame-content ol {
+  color: #ffffff !important;
+  padding-left: 1.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.curriculum-content li,
+.community-content li,
+.markdown-content li,
+.wargame-content li {
+  color: #ffffff !important;
+  margin-bottom: 0.5rem !important;
+  line-height: 1.6 !important;
+}
+
+.curriculum-content a,
+.community-content a,
+.markdown-content a,
+.wargame-content a {
+  color: #60a5fa !important;
+  text-decoration: underline !important;
+}
+
+.curriculum-content a:hover,
+.community-content a:hover,
+.markdown-content a:hover,
+.wargame-content a:hover {
+  color: #93c5fd !important;
+}
+
+.curriculum-content strong,
+.curriculum-content b,
+.community-content strong,
+.community-content b,
+.markdown-content strong,
+.markdown-content b,
+.wargame-content strong,
+.wargame-content b {
+  color: #ffffff !important;
+  font-weight: bold !important;
+  background: linear-gradient(135deg, #ffffff, #d1d5db) !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3) !important;
+}
+
+.curriculum-content em,
+.curriculum-content i,
+.community-content em,
+.community-content i,
+.markdown-content em,
+.markdown-content i,
+.wargame-content em,
+.wargame-content i {
+  color: #ffffff !important;
+  font-style: italic !important;
+}
+
+.curriculum-content table,
+.community-content table,
+.markdown-content table,
+.wargame-content table {
+  color: #ffffff !important;
+  border-collapse: collapse !important;
+  width: 100% !important;
+  margin: 1rem 0 !important;
+  border: 1px solid #4b5563 !important;
+}
+
+.curriculum-content th,
+.curriculum-content td,
+.community-content th,
+.community-content td,
+.markdown-content th,
+.markdown-content td,
+.wargame-content th,
+.wargame-content td {
+  color: #ffffff !important;
+  border: 1px solid #4b5563 !important;
+  padding: 0.75rem !important;
+  text-align: left !important;
+}
+
+.curriculum-content th,
+.community-content th,
+.markdown-content th,
+.wargame-content th {
+  background-color: #374151 !important;
+  font-weight: bold !important;
+}
+
+.curriculum-content hr,
+.community-content hr,
+.markdown-content hr,
+.wargame-content hr {
+  border-color: #4b5563 !important;
+  margin: 2rem 0 !important;
+  border-width: 1px !important;
+}
+
+/* 추가 HTML 요소들에 대한 스타일링 */
+.curriculum-content img,
+.community-content img,
+.markdown-content img,
+.wargame-content img {
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: 8px !important;
+  margin: 1rem 0 !important;
+}
+
+.curriculum-content video,
+.community-content video,
+.markdown-content video,
+.wargame-content video {
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: 8px !important;
+  margin: 1rem 0 !important;
+}
+
+.curriculum-content iframe,
+.community-content iframe,
+.markdown-content iframe,
+.wargame-content iframe {
+  max-width: 100% !important;
+  border-radius: 8px !important;
+  margin: 1rem 0 !important;
+}
+
+.curriculum-content mark,
+.community-content mark,
+.markdown-content mark,
+.wargame-content mark {
+  background-color: #fbbf24 !important;
+  color: #000000 !important;
+  padding: 2px 4px !important;
+  border-radius: 2px !important;
+}
+
+.curriculum-content del,
+.community-content del,
+.markdown-content del,
+.wargame-content del {
+  color: #ef4444 !important;
+  text-decoration: line-through !important;
+}
+
+.curriculum-content ins,
+.community-content ins,
+.markdown-content ins,
+.wargame-content ins {
+  color: #10b981 !important;
+  text-decoration: underline !important;
+}
+
+.curriculum-content kbd,
+.community-content kbd,
+.markdown-content kbd,
+.wargame-content kbd {
+  background-color: #374151 !important;
+  color: #ffffff !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  font-family: monospace !important;
+  border: 1px solid #6b7280 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+.curriculum-content sub,
+.curriculum-content sup,
+.community-content sub,
+.community-content sup,
+.markdown-content sub,
+.markdown-content sup,
+.wargame-content sub,
+.wargame-content sup {
+  color: #ffffff !important;
+  font-size: 0.75em !important;
+}
+
+/* ===== 고급 스크롤바 스타일 ===== */
+
+/* 전체 스크롤바 기본 설정 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(155, 155, 155, 0.5) transparent;
+}
+
+/* Webkit 기반 브라우저 (Chrome, Safari, Edge) */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.6), rgba(139, 92, 246, 0.6));
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  transition: all 0.3s ease;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.8), rgba(139, 92, 246, 0.8));
+  transform: scale(1.1);
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 1), rgba(139, 92, 246, 1));
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* 다크 모드에서의 스크롤바 */
+.dark *::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.6), rgba(236, 72, 153, 0.6));
+}
+
+.dark *::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.8), rgba(236, 72, 153, 0.8));
+}
+
+.dark *::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 1), rgba(236, 72, 153, 1));
+}
+
+/* CTF 페이지 전용 고급 스크롤바 */
+.ctf-scrollbar::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.ctf-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  margin: 4px;
+}
+
+.ctf-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ctf-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #2563eb, #7c3aed, #db2777);
+  transform: scale(1.05);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 0 10px rgba(59, 130, 246, 0.3);
+}
+
+.ctf-scrollbar::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(45deg, #1d4ed8, #6d28d9, #be185d);
+  transform: scale(0.95);
+}
+
+/* 문제 목록 스크롤바 */
+.problem-list-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.problem-list-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 8px;
+}
+
+.problem-list-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #10b981, #059669);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.problem-list-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #059669, #047857);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+/* 순위표 스크롤바 */
+.leaderboard-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.leaderboard-scrollbar::-webkit-scrollbar-track {
+  background: rgba(251, 191, 36, 0.1);
+  border-radius: 10px;
+}
+
+.leaderboard-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border-radius: 10px;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  transition: all 0.3s ease;
+}
+
+.leaderboard-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #d97706, #b45309);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.5);
+}
+
+/* 활동 로그 스크롤바 */
+.activity-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.activity-scrollbar::-webkit-scrollbar-track {
+  background: rgba(139, 92, 246, 0.05);
+  border-radius: 8px;
+}
+
+.activity-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #8b5cf6, #7c3aed);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.activity-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #7c3aed, #6d28d9);
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+}
+
+/* 스크롤바 애니메이션 효과 */
+@keyframes scrollbar-glow {
+  0% {
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
+  }
+}
+
+.glow-scrollbar::-webkit-scrollbar-thumb:hover {
+  animation: scrollbar-glow 2s ease-in-out infinite;
+}
+
+/* 모바일에서 스크롤바 숨기기 (선택사항) */
+@media (max-width: 768px) {
+  .mobile-hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .mobile-hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* 호버 시 스크롤바 표시 효과 */
+.hover-show-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hover-show-scrollbar::-webkit-scrollbar {
+  width: 0px;
+  transition: width 0.3s ease;
+}
+
+.hover-show-scrollbar:hover {
+  scrollbar-width: thin;
+}
+
+.hover-show-scrollbar:hover::-webkit-scrollbar {
+  width: 8px;
+}
+
+.hover-show-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.6), rgba(139, 92, 246, 0.6));
+  border-radius: 10px;
+}
+
+/* ===== 마크다운 파서 볼드 텍스트 강화 (v0/호스팅 완전 동기화) ===== */
+
+/* 볼드 텍스트 **text** 흰색 그라데이션 강제 적용 */
+.curriculum-content .bg-gradient-to-r.from-blue-500\/20.to-purple-500\/20,
+.community-content .bg-gradient-to-r.from-blue-500\/20.to-purple-500\/20,
+.markdown-content .bg-gradient-to-r.from-blue-500\/20.to-purple-500\/20,
+.wargame-content .bg-gradient-to-r.from-blue-500\/20.to-purple-500\/20 {
+  background: linear-gradient(to right, rgba(59, 130, 246, 0.2), rgba(147, 51, 234, 0.2)) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  padding: 0.25rem 0.5rem !important;
+  border-radius: 0.25rem !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.2) !important;
+}
+
+.curriculum-content .bg-gradient-to-r.from-yellow-500\/20.to-orange-500\/20,
+.community-content .bg-gradient-to-r.from-yellow-500\/20.to-orange-500\/20,
+.markdown-content .bg-gradient-to-r.from-yellow-500\/20.to-orange-500\/20,
+.wargame-content .bg-gradient-to-r.from-yellow-500\/20.to-orange-500\/20 {
+  background: linear-gradient(to right, rgba(234, 179, 8, 0.2), rgba(249, 115, 22, 0.2)) !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  padding: 0.25rem 0.5rem !important;
+  border-radius: 0.25rem !important;
+  border: 1px solid rgba(234, 179, 8, 0.3) !important;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 0 15px rgba(234, 179, 8, 0.2) !important;
+}
+
+/* 투명도 배경 클래스 강제 적용 */
+.curriculum-content .from-blue-500\/20,
+.community-content .from-blue-500\/20,
+.markdown-content .from-blue-500\/20,
+.wargame-content .from-blue-500\/20 {
+  --tw-gradient-from: rgba(59, 130, 246, 0.2) !important;
+  --tw-gradient-to: rgba(59, 130, 246, 0) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+.curriculum-content .to-purple-500\/20,
+.community-content .to-purple-500\/20,
+.markdown-content .to-purple-500\/20,
+.wargame-content .to-purple-500\/20 {
+  --tw-gradient-to: rgba(147, 51, 234, 0.2) !important;
+}
+
+.curriculum-content .from-yellow-500\/20,
+.community-content .from-yellow-500\/20,
+.markdown-content .from-yellow-500\/20,
+.wargame-content .from-yellow-500\/20 {
+  --tw-gradient-from: rgba(234, 179, 8, 0.2) !important;
+  --tw-gradient-to: rgba(234, 179, 8, 0) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+.curriculum-content .to-orange-500\/20,
+.community-content .to-orange-500\/20,
+.markdown-content .to-orange-500\/20,
+.wargame-content .to-orange-500\/20 {
+  --tw-gradient-to: rgba(249, 115, 22, 0.2) !important;
+}
+
+.curriculum-content .border-blue-500\/30,
+.community-content .border-blue-500\/30,
+.markdown-content .border-blue-500\/30,
+.wargame-content .border-blue-500\/30 {
+  border-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+.curriculum-content .border-yellow-500\/30,
+.community-content .border-yellow-500\/30,
+.markdown-content .border-yellow-500\/30,
+.wargame-content .border-yellow-500\/30 {
+  border-color: rgba(234, 179, 8, 0.3) !important;
+}
+
+/* 모든 볼드 텍스트에 대한 포괄적 강제 스타일 */
+.curriculum-content strong,
+.curriculum-content b,
+.community-content strong,
+.community-content b,
+.markdown-content strong,
+.markdown-content b,
+.wargame-content strong,
+.wargame-content b {
+  background: linear-gradient(135deg, #ffffff, #e5e7eb) !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  color: transparent !important;
+  font-weight: 700 !important;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
+  padding: 0.125rem 0.25rem !important;
+  border-radius: 0.25rem !important;
+  position: relative !important;
+}
+
+.curriculum-content strong::before,
+.curriculum-content b::before,
+.community-content strong::before,
+.community-content b::before,
+.markdown-content strong::before,
+.markdown-content b::before,
+.wargame-content strong::before,
+.wargame-content b::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1)) !important;
+  border-radius: 0.25rem !important;
+  z-index: -1 !important;
+}
+
+/* 코드 블록 스타일 강화 */
+.curriculum-content .bg-slate-900,
+.community-content .bg-slate-900,
+.markdown-content .bg-slate-900,
+.wargame-content .bg-slate-900 {
+  background-color: #0f172a !important;
+  border: 1px solid #334155 !important;
+}
+
+.curriculum-content .text-slate-100,
+.community-content .text-slate-100,
+.markdown-content .text-slate-100,
+.wargame-content .text-slate-100 {
+  color: #f1f5f9 !important;
+}
+
+.curriculum-content .text-slate-300,
+.community-content .text-slate-300,
+.markdown-content .text-slate-300,
+.wargame-content .text-slate-300 {
+  color: #cbd5e1 !important;
+}
+
+.curriculum-content .text-slate-400,
+.community-content .text-slate-400,
+.markdown-content .text-slate-400,
+.wargame-content .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+.curriculum-content .border-slate-700,
+.community-content .border-slate-700,
+.markdown-content .border-slate-700,
+.wargame-content .border-slate-700 {
+  border-color: #334155 !important;
+}
+
+.curriculum-content .rounded-t-lg,
+.community-content .rounded-t-lg,
+.markdown-content .rounded-t-lg,
+.wargame-content .rounded-t-lg {
+  border-top-left-radius: 0.5rem !important;
+  border-top-right-radius: 0.5rem !important;
+}
+
+.curriculum-content .rounded-b-lg,
+.community-content .rounded-b-lg,
+.markdown-content .rounded-b-lg,
+.wargame-content .rounded-b-lg {
+  border-bottom-left-radius: 0.5rem !important;
+  border-bottom-right-radius: 0.5rem !important;
+}
+
+.curriculum-content .justify-between,
+.community-content .justify-between,
+.markdown-content .justify-between,
+.wargame-content .justify-between {
+  justify-content: space-between !important;
+}
+
+.curriculum-content .gap-3,
+.community-content .gap-3,
+.markdown-content .gap-3,
+.wargame-content .gap-3 {
+  gap: 0.75rem !important;
+}
+
+.curriculum-content .w-3,
+.community-content .w-3,
+.markdown-content .w-3,
+.wargame-content .w-3 {
+  width: 0.75rem !important;
+}
+
+.curriculum-content .h-3,
+.community-content .h-3,
+.markdown-content .h-3,
+.wargame-content .h-3 {
+  height: 0.75rem !important;
+}
+
+.curriculum-content .bg-red-500,
+.community-content .bg-red-500,
+.markdown-content .bg-red-500,
+.wargame-content .bg-red-500 {
+  background-color: #ef4444 !important;
+}
+
+.curriculum-content .bg-yellow-500,
+.community-content .bg-yellow-500,
+.markdown-content .bg-yellow-500,
+.wargame-content .bg-yellow-500 {
+  background-color: #eab308 !important;
+}
+
+.curriculum-content .bg-green-500,
+.community-content .bg-green-500,
+.markdown-content .bg-green-500,
+.wargame-content .bg-green-500 {
+  background-color: #22c55e !important;
+}
+
+/* 호버 효과 강화 */
+.curriculum-content .hover\:text-white:hover,
+.community-content .hover\:text-white:hover,
+.markdown-content .hover\:text-white:hover,
+.wargame-content .hover\:text-white:hover {
+  color: #ffffff !important;
+}
+
+.curriculum-content .hover\:bg-slate-700:hover,
+.community-content .hover\:bg-slate-700:hover,
+.markdown-content .hover\:bg-slate-700:hover,
+.wargame-content .hover\:bg-slate-700:hover {
+  background-color: #334155 !important;
+}
+
+.curriculum-content .hover\:text-blue-300:hover,
+.community-content .hover\:text-blue-300:hover,
+.markdown-content .hover\:text-blue-300:hover,
+.wargame-content .hover\:text-blue-300:hover {
+  color: #93c5fd !important;
+}
+
+.curriculum-content .hover\:text-cyan-300:hover,
+.community-content .hover\:text-cyan-300:hover,
+.markdown-content .hover\:text-cyan-300:hover,
+.wargame-content .hover\:text-cyan-300:hover {
+  color: #67e8f9 !important;
+}
+
+/* 추가 유틸리티 클래스 강제 적용 */
+.curriculum-content .py-3,
+.community-content .py-3,
+.markdown-content .py-3,
+.wargame-content .py-3 {
+  padding-top: 0.75rem !important;
+  padding-bottom: 0.75rem !important;
+}
+
+.curriculum-content .py-1,
+.community-content .py-1,
+.markdown-content .py-1,
+.wargame-content .py-1 {
+  padding-top: 0.25rem !important;
+  padding-bottom: 0.25rem !important;
+}
+
+.curriculum-content .px-2,
+.community-content .px-2,
+.markdown-content .px-2,
+.wargame-content .px-2 {
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+}
+
+.curriculum-content .my-8,
+.community-content .my-8,
+.markdown-content .my-8,
+.wargame-content .my-8 {
+  margin-top: 2rem !important;
+  margin-bottom: 2rem !important;
+}
+
+.curriculum-content .mt-2,
+.community-content .mt-2,
+.markdown-content .mt-2,
+.wargame-content .mt-2 {
+  margin-top: 0.5rem !important;
+}
+
+.curriculum-content .mx-auto,
+.community-content .mx-auto,
+.markdown-content .mx-auto,
+.wargame-content .mx-auto {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.curriculum-content .h-auto,
+.community-content .h-auto,
+.markdown-content .h-auto,
+.wargame-content .h-auto {
+  height: auto !important;
+}
+
+.curriculum-content .loading-lazy,
+.community-content .loading-lazy,
+.markdown-content .loading-lazy,
+.wargame-content .loading-lazy {
+  loading: lazy !important;
+}
+
+/* 브라우저 호환성을 위한 벤더 프리픽스 추가 */
+.curriculum-content .bg-clip-text,
+.community-content .bg-clip-text,
+.markdown-content .bg-clip-text,
+.wargame-content .bg-clip-text {
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  -moz-background-clip: text !important;
+  -ms-background-clip: text !important;
+}
+
+.curriculum-content .transition-all,
+.community-content .transition-all,
+.markdown-content .transition-all,
+.wargame-content .transition-all {
+  transition: all 0.2s ease !important;
+  -webkit-transition: all 0.2s ease !important;
+  -moz-transition: all 0.2s ease !important;
+  -ms-transition: all 0.2s ease !important;
+}
+
+/* 모든 환경에서 일관된 렌더링을 위한 추가 강제 스타일 */
+.curriculum-content *,
+.community-content *,
+.markdown-content *,
+.wargame-content * {
+  box-sizing: border-box !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+/* 이탤릭 효과 완전 제거 */
+.curriculum-content em,
+.curriculum-content i,
+.community-content em,
+.community-content i,
+.markdown-content em,
+.markdown-content i,
+.wargame-content em,
+.wargame-content i {
+  color: #ffffff !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+  background: none !important;
+  border: none !important;
+  text-decoration: none !important;
+}

@@ -1,0 +1,693 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ========================================
+    // 헬퍼 함수들
+    // ========================================
+    
+    // 관리자 확인 함수
+    function isAdmin() {
+      return request.auth != null && 
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.title == '관리자' ||
+         request.auth.token.email == 'mistarcodm@gmail.com');
+    }
+    
+    // 자신의 문서인지 확인하는 함수
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+    
+    // 인증된 사용자인지 확인
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // 문서 작성자인지 확인
+    function isAuthor() {
+      return request.auth != null && request.auth.uid == resource.data.userId;
+    }
+    
+    // 문서 작성자인지 확인 (authorId 필드)
+    function isPostAuthor() {
+      return request.auth != null && request.auth.uid == resource.data.authorId;
+    }
+    
+    // 문제를 해결한 사용자인지 확인
+    function hasSolvedChallenge(challengeId) {
+      return request.auth != null && 
+        exists(/databases/$(database)/documents/wargame_solve_logs/$(request.auth.uid + '_' + challengeId));
+    }
+    
+    function isNotSanctioned() {
+      return request.auth != null && 
+        (!exists(/databases/$(database)/documents/user_sanctions/$(request.auth.uid)) ||
+         get(/databases/$(database)/documents/user_sanctions/$(request.auth.uid)).data.isActive != true);
+    }
+    
+    function isValidUser() {
+      return isAuthenticated();
+    }
+    
+    // ========================================
+    // 사용자 관련 규칙 (랭킹 시스템 지원)
+    // ========================================
+    
+    // 사용자 문서 - 랭킹 시스템을 위해 모든 사용자 정보 읽기 허용
+    match /users/{userId} {
+      allow read: if true; // 랭킹 시스템과 프로필 호버를 위해 모든 사용자 정보 읽기 허용
+      allow create: if isOwner(userId) || isAdmin();
+      allow update: if isOwner(userId) || isAdmin() || 
+        (isAuthenticated() && 
+         request.resource.data.diff(resource.data).affectedKeys()
+           .hasOnly(['points', 'wargamePoints', 'wargameScore', 'ctfPoints', 'solvedChallenges', 'solvedWargameProblems', 'lastActivity', 'lastLogin', 'seasonRank', 'lastSeasonReset', 'photoURL', 'affiliation', 'username', 'displayName', 'title', 'level', 'achievements', 'tier', 'rank', 'previousRank', 'streak', 'totalSolves', 'firstBlood', 'totalAttempts', 'averageTime', 'bestTime', 'worstTime', 'isDisposable', 'bio', 'location', 'website', 'github', 'twitter', 'linkedin', 'discord', 'preferences', 'settings', 'theme', 'language']));
+      allow delete: if isAdmin();
+      
+      // 사용자별 솔브 로그
+      match /solved_challenges/{challengeId} {
+        allow read: if true; // 랭킹 시스템을 위해 읽기 허용
+        allow write: if isOwner(userId) || isAdmin();
+      }
+    }
+    
+    // 사용자별 문제 해결 로그 - 개별 문서 규칙
+    match /user_solve_logs/{logId} {
+      allow read: if true; // 랭킹 시스템을 위해 읽기 허용
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.userId;
+      allow update, delete: if isAdmin() || (isAuthenticated() && request.auth.uid == resource.data.userId);
+    }
+    
+    // 사용자 통계 정보
+    match /user_stats/{userId} {
+      allow read: if true; // 프로필 호버를 위해 읽기 허용
+      allow write: if isOwner(userId) || isAdmin();
+    }
+    
+    // 사용자 점수 정보
+    match /user_scores/{userId} {
+      allow read: if true; // 프로필 호버를 위해 읽기 허용
+      allow write: if isOwner(userId) || isAdmin();
+    }
+    
+    // 점수 히스토리 규칙
+    match /score_history/{historyId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // 랭킹 관련 컬렉션 읽기 허용
+    match /rankings/{rankingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // ========================================
+    // 워게임 관련 규칙
+    // ========================================
+    
+    // 워게임 문제
+    match /wargame_challenges/{challengeId} {
+      allow read: if true;
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() || 
+        (isAuthenticated() && 
+         request.resource.data.diff(resource.data).affectedKeys()
+           .hasOnly(['solvedCount', 'solvedBy', 'lastSolved', 'level', 'points', 'difficulty', 'averageDifficulty', 'firstBlood', 'totalAttempts', 'averageTime', 'bestTime', 'worstTime', 'views', 'likes', 'dislikes', 'bookmarks']));
+    }
+    
+    // 워게임 해결 로그
+    match /wargame_solve_logs/{logId} {
+      allow read: if true; // 랭킹 시스템과 통계를 위해 읽기 허용
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.userId;
+      allow update, delete: if isAdmin();
+    }
+    
+    // 워게임 풀이 (WriteUps)
+    match /wargame_writeups/{writeupId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.userId && 
+        hasSolvedChallenge(request.resource.data.challengeId);
+      allow update: if isAuthenticated() && 
+        (request.auth.uid == resource.data.userId || isAdmin());
+      allow delete: if isAdmin() || 
+        (isAuthenticated() && request.auth.uid == resource.data.userId);
+    }
+    
+    // 워게임 풀이 댓글
+    match /wargame_writeup_comments/{commentId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.authorId;
+      allow update: if isAuthenticated() && 
+        (request.auth.uid == resource.data.authorId || isAdmin());
+      allow delete: if isAdmin() || 
+        (isAuthenticated() && request.auth.uid == resource.data.authorId);
+    }
+    
+    // 워게임 풀이 반응 (좋아요/싫어요)
+    match /wargame_writeup_reactions/{reactionId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.userId;
+      allow update: if isAuthenticated() && 
+        request.auth.uid == resource.data.userId;
+      allow delete: if isAuthenticated() && 
+        request.auth.uid == resource.data.userId;
+    }
+    
+    // 워게임 풀이 북마크
+    match /wargame_writeup_bookmarks/{bookmarkId} {
+      allow read: if isAuthenticated() && 
+        request.auth.uid == resource.data.userId;
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.userId;
+      allow delete: if isAuthenticated() && 
+        request.auth.uid == resource.data.userId;
+    }
+    
+    // 워게임 난이도 투표
+    match /wargame_difficulty_votes/{voteId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.userId &&
+        hasSolvedChallenge(request.resource.data.challengeId);
+      allow update: if isAuthenticated() && 
+        request.auth.uid == resource.data.userId &&
+        hasSolvedChallenge(resource.data.challengeId);
+      allow delete: if isAdmin();
+    }
+    
+    // 활성 사용자 컬렉션
+    match /active_users/{userId} {
+      allow read: if true;
+      allow write: if isValidUser();
+    }
+    
+    // ========================================
+    // CTF 관련 규칙
+    // ========================================
+    
+    // CTF 대회
+    match /ctf_contests/{contestId} {
+      allow read: if true; // 랭킹 시스템을 위해 읽기 허용
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() || 
+        (isAuthenticated() && 
+         request.resource.data.diff(resource.data).affectedKeys()
+           .hasOnly(['participants', 'authorizedUsers', 'participantCount']));
+      
+      // CTF 문제 (중첩 컬렉션)
+      match /problems/{problemId} {
+        allow read: if true; // 랭킹 시스템을 위해 읽기 허용
+        allow write: if isAdmin();
+      }
+    }
+    
+    // CTF 문제 (단일 컬렉션)
+    match /ctf_problems/{problemId} {
+      allow read: if true; // 랭킹 시스템을 위해 읽기 허용
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() || 
+        (isAuthenticated() && 
+         request.resource.data.diff(resource.data).affectedKeys()
+           .hasOnly(['solvedCount', 'solvedBy', 'lastSolved', 'firstBlood', 'totalAttempts', 'averageTime', 'bestTime', 'worstTime', 'views', 'likes', 'dislikes', 'bookmarks']));
+    }
+    
+    match /ctf_problem_files/{fileId} {
+      allow read: if isAuthenticated() && 
+        (isAdmin() || 
+         // 대회 참가자만 파일 다운로드 가능
+         exists(/databases/$(database)/documents/ctf_participants/$(resource.data.contestId + '_' + request.auth.uid)));
+      allow write: if isAdmin();
+    }
+    
+    match /ctf_submission_attempts/{attemptId} {
+      allow read: if isAdmin() || 
+        (isAuthenticated() && request.auth.uid == resource.data.userId);
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.userId;
+      allow update, delete: if isAdmin();
+    }
+    
+    match /ctf_hints/{hintId} {
+      allow read: if isAuthenticated() && 
+        (isAdmin() || 
+         // 힌트를 구매한 사용자만 읽기 가능
+         exists(/databases/$(database)/documents/ctf_hint_purchases/$(request.auth.uid + '_' + hintId)));
+      allow write: if isAdmin();
+    }
+    
+    match /ctf_hint_purchases/{purchaseId} {
+      allow read: if isAuthenticated() && 
+        (isAdmin() || request.auth.uid == resource.data.userId);
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.userId;
+      allow update, delete: if isAdmin();
+    }
+    
+    match /ctf_problem_bookmarks/{bookmarkId} {
+      allow read: if isAuthenticated() && 
+        request.auth.uid == resource.data.userId;
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.userId;
+      allow delete: if isAuthenticated() && 
+        request.auth.uid == resource.data.userId;
+    }
+    
+    match /ctf_teams/{teamId} {
+      allow read: if true; // 랭킹을 위해 팀 정보 공개
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.leaderId;
+      allow update: if isAuthenticated() && 
+        (isAdmin() || 
+         request.auth.uid == resource.data.leaderId ||
+         resource.data.members.hasAny([request.auth.uid]));
+      allow delete: if isAdmin() || 
+        (isAuthenticated() && request.auth.uid == resource.data.leaderId);
+    }
+    
+    match /ctf_team_applications/{applicationId} {
+      allow read: if isAuthenticated() && 
+        (isAdmin() || 
+         request.auth.uid == resource.data.applicantId ||
+         request.auth.uid == resource.data.teamLeaderId);
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.applicantId;
+      allow update: if isAuthenticated() && 
+        (isAdmin() || request.auth.uid == resource.data.teamLeaderId);
+      allow delete: if isAuthenticated() && 
+        (isAdmin() || 
+         request.auth.uid == resource.data.applicantId ||
+         request.auth.uid == resource.data.teamLeaderId);
+    }
+    
+    match /ctf_questions/{questionId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.authorId;
+      allow update: if isAdmin() || 
+        (isAuthenticated() && request.auth.uid == resource.data.authorId);
+      allow delete: if isAdmin();
+    }
+    
+    match /ctf_announcements/{announcementId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    match /ctf_difficulty_votes/{voteId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.userId &&
+        // 문제를 해결한 사용자만 난이도 투표 가능
+        exists(/databases/$(database)/documents/ctf_solve_logs/$(resource.data.contestId + '_' + request.auth.uid + '_' + resource.data.problemId));
+      allow update: if isAuthenticated() && 
+        request.auth.uid == resource.data.userId;
+      allow delete: if isAdmin();
+    }
+    
+    match /ctf_problem_reviews/{reviewId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.authorId &&
+        // 문제를 해결한 사용자만 리뷰 작성 가능
+        exists(/databases/$(database)/documents/ctf_solve_logs/$(resource.data.contestId + '_' + request.auth.uid + '_' + resource.data.problemId));
+      allow update: if isAuthenticated() && 
+        (request.auth.uid == resource.data.authorId || isAdmin());
+      allow delete: if isAdmin() || 
+        (isAuthenticated() && request.auth.uid == resource.data.authorId);
+    }
+    
+    match /ctf_review_reactions/{reactionId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.userId;
+      allow update: if isAuthenticated() && 
+        request.auth.uid == resource.data.userId;
+      allow delete: if isAuthenticated() && 
+        request.auth.uid == resource.data.userId;
+    }
+
+    // CTF 참가자
+    match /ctf_participants/{participantId} {
+      allow read: if true; // 랭킹 시스템을 위해 읽기 허용
+      allow create: if isAuthenticated() && 
+                     request.resource.data.uid == request.auth.uid;
+      allow update: if isAdmin() || 
+        (isAuthenticated() && request.auth.uid == resource.data.uid);
+      allow delete: if isAdmin() || 
+        (isAuthenticated() && request.auth.uid == resource.data.uid);
+    }
+    
+    // CTF 해결 로그
+    match /ctf_solve_logs/{logId} {
+      allow read: if true; // 랭킹 시스템과 통계를 위해 읽기 허용
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.userId;
+      allow update, delete: if isAdmin();
+    }
+    
+    // CTF 예약
+    match /ctf_reservations/{reservationId} {
+      allow read: if isValidUser();
+      allow create: if isValidUser() && 
+                     request.resource.data.creatorId == request.auth.uid &&
+                     isNotSanctioned();
+      allow update, delete: if isAdmin() || 
+        (isValidUser() && request.auth.uid == resource.data.creatorId);
+    }
+    
+    // ========================================
+    // 커뮤니티 관련 규칙
+    // ========================================
+    
+    // 커뮤니티 게시글
+    match /community_posts/{postId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.authorId &&
+        // 공지사항은 관리자만 생성 가능
+        (request.resource.data.isNotice == false || isAdmin()) &&
+        // 핀 고정은 관리자만 가능
+        (request.resource.data.isPinned == false || isAdmin());
+      allow update: if isAuthenticated() && 
+        (request.auth.uid == resource.data.authorId || isAdmin()) &&
+        // 공지사항 변경은 관리자만 가능
+        (request.resource.data.isNotice == resource.data.isNotice || isAdmin()) &&
+        // 핀 고정 변경은 관리자만 가능
+        (request.resource.data.isPinned == resource.data.isPinned || isAdmin());
+      allow delete: if isAdmin() || 
+        (isAuthenticated() && request.auth.uid == resource.data.authorId);
+      
+      // 게시글 댓글 (중첩 컬렉션)
+      match /comments/{commentId} {
+        allow read: if true;
+        allow create: if isAuthenticated() && 
+          request.auth.uid == request.resource.data.authorId;
+        allow update: if isAuthenticated() && 
+          (request.auth.uid == resource.data.authorId || isAdmin());
+        allow delete: if isAdmin() || 
+          (isAuthenticated() && request.auth.uid == resource.data.authorId);
+      }
+    }
+    
+    // 커뮤니티 댓글 (별도 컬렉션)
+    match /community_comments/{commentId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.authorId;
+      allow update, delete: if isAuthenticated() && 
+        (request.auth.uid == resource.data.authorId || isAdmin());
+    }
+    
+    // 커뮤니티 게시글 반응 (좋아요/싫어요)
+    match /community_post_reactions/{reactionId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.userId;
+      allow update: if isAuthenticated() && 
+        request.auth.uid == resource.data.userId;
+      allow delete: if isAuthenticated() && 
+        request.auth.uid == resource.data.userId;
+    }
+    
+    // 커뮤니티 게시글 북마크
+    match /community_post_bookmarks/{bookmarkId} {
+      allow read: if isAuthenticated() && 
+        request.auth.uid == resource.data.userId;
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.userId;
+      allow delete: if isAuthenticated() && 
+        request.auth.uid == resource.data.userId;
+    }
+    
+    // 승인 대기 댓글
+    match /pending_comments/{commentId} {
+      allow create: if isAuthenticated();
+      allow read, update, delete: if isAdmin();
+    }
+    
+    // 커뮤니티 카테고리
+    match /community_categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // ========================================
+    // 플래그 제출 관련 규칙
+    // ========================================
+    
+    // 플래그 제출 로그
+    match /flag_submissions/{submissionId} {
+      allow read: if isAdmin();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin();
+    }
+    
+    // 공개 제출 기록
+    match /public_submissions/{submissionId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin();
+    }
+    
+    // ========================================
+    // 관리 관련 규칙
+    // ========================================
+    
+    // 배너 관리
+    match /banners/{bannerId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // 커리큘럼
+    match /curriculum/{curriculumId} {
+      allow read: if true; // 모든 사용자가 커리큘럼 읽기 가능
+      allow write: if isAdmin();
+      
+      // 커리큘럼 단계
+      match /steps/{stepId} {
+        allow read: if true; // 모든 사용자가 커리큘럼 단계 읽기 가능
+        allow write: if isAdmin();
+      }
+    }
+    
+    // 커리큘럼 카테고리
+    match /curriculum_categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // 시즌 관리
+    match /seasons/{seasonId} {
+      allow read: if true; // 랭킹 시스템을 위해 읽기 허용
+      allow write: if isAdmin();
+    }
+    
+    // 시즌 참가자
+    match /season_participants/{participantId} {
+      allow read: if true; // 랭킹 시스템을 위해 읽기 허용
+      allow create: if isAuthenticated();
+      allow update: if isOwner(request.resource.data.userId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // 시즌 점수 기록
+    match /season_score_history/{historyId} {
+      allow read: if true; // 랭킹 시스템을 위해 읽기 허용
+      allow create: if isValidUser();
+      allow update, delete: if isAdmin();
+    }
+    
+    // 점수 관리
+    match /scores/{scoreId} {
+      allow read: if true; // 랭킹 시스템을 위해 읽기 허용
+      allow write: if isAdmin();
+    }
+    
+    // 알림
+    match /notifications/{notificationId} {
+      allow read: if isValidUser() && 
+        (request.auth.uid == resource.data.userId || isAdmin());
+      allow create: if isAdmin() || isValidUser();
+      allow update: if isValidUser() && 
+        request.auth.uid == resource.data.userId;
+      allow delete: if isAdmin();
+    }
+    
+    // 알림 설정
+    match /notification_settings/{userId} {
+      allow read, write: if isValidUser() && 
+        (request.auth.uid == userId || isAdmin());
+    }
+    
+    // 사용자 활동 로그
+    match /activity_logs/{logId} {
+      allow read: if isAdmin();
+      allow create: if isValidUser();
+      allow update, delete: if isAdmin();
+    }
+    
+    // 사용자 활동 로그 (관리자용)
+    match /user_activity_logs/{logId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+    
+    // 제재 관리
+    match /sanctions/{sanctionId} {
+      allow read: if isAdmin() || 
+        (isValidUser() && request.auth.uid == resource.data.userId);
+      allow write: if isAdmin();
+    }
+    
+    // 사용자 제재 정보
+    match /user_sanctions/{sanctionId} {
+      allow read: if isAdmin() || 
+        (isValidUser() && request.auth.uid == resource.data.userId);
+      allow write: if isAdmin();
+    }
+    
+    // 사용자 검증 정보
+    match /user_verifications/{verificationId} {
+      allow read: if isAdmin() || 
+        (isValidUser() && request.auth.uid == resource.data.userId);
+      allow write: if isAdmin();
+    }
+    
+    // 예약 시스템
+    match /reservations/{reservationId} {
+      allow read: if isValidUser() && 
+        (request.auth.uid == resource.data.userId || isAdmin());
+      allow write: if isValidUser() && 
+        (request.auth.uid == resource.data.userId || isAdmin()) &&
+        isNotSanctioned();
+    }
+    
+    // 프로필 배너
+    match /profile_banners/{bannerId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // 업적 시스템
+    match /achievements/{achievementId} {
+      allow read: if true; // 모든 사용자가 업적 정보 읽기 가능
+      allow write: if isAdmin();
+    }
+    
+    // 사용자 업적
+    match /user_achievements/{userId} {
+      allow read: if true; // 랭킹 시스템을 위해 읽기 허용
+      allow write: if isOwner(userId) || isAdmin();
+    }
+    
+    // 레벨 시스템
+    match /user_levels/{userId} {
+      allow read: if true; // 랭킹 시스템을 위해 읽기 허용
+      allow write: if isOwner(userId) || isAdmin();
+    }
+    
+    // 경험치 로그
+    match /exp_logs/{logId} {
+      allow read: if true; // 랭킹 시스템을 위해 읽기 허용
+      allow create: if isValidUser() && request.auth.uid == request.resource.data.userId;
+      allow update, delete: if isAdmin();
+    }
+    
+    // 팔로우 시스템 규칙
+    match /follows/{followId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.followerId;
+      allow delete: if isAuthenticated() && request.auth.uid == request.resource.data.followerId;
+    }
+    
+    // 사용자 팔로우 정보
+    match /user_follows/{userId} {
+      allow read: if true;
+      allow write: if isOwner(userId) || isAdmin();
+    }
+    
+    // ========================================
+    // 추가 상호작용 시스템
+    // ========================================
+    
+    // 사용자 멘션
+    match /user_mentions/{mentionId} {
+      allow read: if isAuthenticated() && 
+        (request.auth.uid == resource.data.mentionedUserId || 
+         request.auth.uid == resource.data.mentioningUserId || 
+         isAdmin());
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.mentioningUserId;
+      allow update, delete: if isAdmin();
+    }
+    
+    // 문제 제안
+    match /problem_suggestions/{suggestionId} {
+      allow read: if isAdmin() || 
+        (isAuthenticated() && request.auth.uid == resource.data.suggestedBy);
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.suggestedBy;
+      allow update: if isAdmin();
+      allow delete: if isAdmin() || 
+        (isAuthenticated() && request.auth.uid == resource.data.suggestedBy);
+    }
+    
+    // 게시글 템플릿
+    match /post_templates/{templateId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // 검색 필터 설정
+    match /search_filters/{filterId} {
+      allow read: if isValidUser() && 
+        request.auth.uid == resource.data.userId;
+      allow write: if isValidUser() && 
+        request.auth.uid == request.resource.data.userId;
+    }
+    
+    // 파일 업로드 메타데이터
+    match /file_uploads/{uploadId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.uploadedBy;
+      allow update, delete: if isAdmin() || 
+        (isAuthenticated() && request.auth.uid == resource.data.uploadedBy);
+    }
+    
+    // 시스템 설정
+    match /system_settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // 사용자 세션 정보
+    match /user_sessions/{sessionId} {
+      allow read: if isAuthenticated() && 
+        request.auth.uid == resource.data.userId;
+      allow write: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.userId;
+    }
+    
+    // 보안 로그
+    match /security_logs/{logId} {
+      allow read: if isAdmin();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin();
+    }
+    
+    // ========================================
+    // 기본 규칙 (최하위 우선순위)
+    // ========================================
+    
+    // 기타 모든 문서에 대한 기본 규칙
+    match /{document=**} {
+      allow read: if true; // 기본적으로 모든 읽기 허용 (랭킹 시스템 지원)
+      allow write: if isAdmin();
+    }
+  }
+}
