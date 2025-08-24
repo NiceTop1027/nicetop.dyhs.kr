@@ -1,30 +1,65 @@
-# 혁명적인 레전드
+# NT-SecurityChallenges
 
-*Automatically synced with your [v0.dev](https://v0.dev) deployments*
+최고의 보안 전문가가 되기 위한 여정을 시작하세요.  
+실전 보안 도전과 함께 성장하는 웹 플랫폼입니다.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/dynicetops-projects/v0--fx)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/chat/projects/nVfDPzFhyUj)
+---
 
-## Overview
+## 📚 플랫폼 소개
 
-This repository will stay in sync with your deployed chats on [v0.dev](https://v0.dev).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.dev](https://v0.dev).
+**NT-SecurityChallenges**는 웹 해킹, 시스템 해킹, 암호학 등 다양한 실전 보안 도전 카테고리를 제공하여, 사용자들이 CTF와 워게임 환경에서 실력을 쌓고 검증할 수 있는 보안 교육/도전 시스템입니다.
 
-## Deployment
+---
 
-Your project is live at:
+## 🚩 주요 기능
 
-**[https://vercel.com/dynicetops-projects/v0--fx](https://vercel.com/dynicetops-projects/v0--fx)**
+- **보안 도전 카테고리**
+  - 웹 해킹 / 시스템 해킹 / 암호학 등
+  - 지속적으로 신규 문제 및 과제 추가
+- **실전 워게임**
+  - 해킹 기술을 연습할 수 있는 가상 환경 제공
+- **CTF 문제풀이**
+  - 다양한 난이도의 CTF 문제를 풀고 실력 검증
+  - 순위 및 점수 시스템으로 경쟁과 동기 부여
+- **유저 커뮤니티**
+  - 사용자 간 지식 공유, 토론 및 피드백
+  - 정보와 노하우를 통해 함께 성장
+- **통합 랭킹 및 통계**
+  - 성과 및 실력을 직관적으로 확인하고 비교
 
-## Build your app
+---
 
-Continue building your app on:
+## 🏗️ 시스템 구조
 
-**[https://v0.dev/chat/projects/nVfDPzFhyUj](https://v0.dev/chat/projects/nVfDPzFhyUj)**
+- **프론트엔드:** React 기반 SPA, UX 최적화
+- **백엔드:** RESTful API 서버, 실시간 서비스 연동
+- **보안:** OAuth/JWT 인증, 도전 환경 격리 및 로깅
+- **관리 시스템:** 문제 출제·수정, 참가자/랭킹·통합 관리
 
-## How It Works
+---
 
-1. Create and modify your project using [v0.dev](https://v0.dev)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+## 🎯 목적 및 비전
+
+- 실제 해킹/보안 교육을 통한 실력 향상
+- 다양한 분야의 도전 과제를 통해 전문가 양성
+- 커뮤니티 중심의 지식 공유 및 오픈 성장
+
+---
+
+## 🏁 시작하기
+
+1. [가입](https://nicetop.dyhs.kr) 후 다양한 보안 도전 참여
+2. 실력을 성장시키고 순위/성과 확인
+3. 커뮤니티에서 함께 소통하고 성장
+
+---
+
+## 📬 문의 및 건의
+
+- 프로젝트 관련 문의는 Issue 또는 Discussions에 남겨주세요.
+
+---
+
+## 📝 라이선스
+
+본 프로젝트는 오픈 커뮤니티 목적이며, 관련 라이선스는 리포지토리 내 LICENSE 파일을 참고해 주시기 바랍니다.
